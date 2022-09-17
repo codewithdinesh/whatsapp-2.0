@@ -8,13 +8,12 @@ import React from 'react'
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useCollection } from 'react-firebase-hooks/firestore';
 import { auth, db } from '../firebase';
-import getRecipientEmail from '../utils/getRecipientEmail';
 
 export default function Chat({ chatUser }) {
 
     // chatUser - recipient user
-
     const [user, loading] = useAuthState(auth);
+
     const router = useRouter();
 
 
@@ -26,10 +25,12 @@ export default function Chat({ chatUser }) {
     const [recipientSnapshot] = useCollection(recipientChatRef);
 
 
-    console.log("Reciepient:", recipientSnapshot?.docs[0])
+    // console.log("Reciepient:", recipientSnapshot?.docs[0])
+
 
     // get first user data (becuase of using collection)
     const recipient = recipientSnapshot?.docs[0]?.data();
+
 
     const recipientID = recipientSnapshot?.docs[0]?.id;
 
@@ -40,7 +41,7 @@ export default function Chat({ chatUser }) {
 
     // enter to the chat
     const enterChat = () => {
-        
+
         router.push(`/chat/${recipientID}`)
         // if user is not registered then it will goes to "/chat/undefined"
         // for that may use email for chat path like this >"/chat/email@gmail.com"
