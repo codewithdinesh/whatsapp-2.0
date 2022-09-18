@@ -17,10 +17,12 @@ a {
 
 @media (prefers-color-scheme: dark) {
   html {
-    color-scheme: dark;
+    /* dark */
+    color-scheme: white;
   }
+
   body {
-    color: white;
-    background: black;
+    /* color: white; */
+    /* background: black; */
   }
 }

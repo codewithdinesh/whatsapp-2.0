@@ -8,43 +8,30 @@ import React from 'react'
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useCollection } from 'react-firebase-hooks/firestore';
 import { auth, db } from '../firebase';
+import getRecipientEmail from "../utils/getRecipientEmail";
 
-export default function Chat({ chatUser }) {
-
-    // chatUser - recipient user
-    const [user, loading] = useAuthState(auth);
+export default function Chat({ id, users, user }) {
 
     const router = useRouter();
 
+    const recipientEmail = getRecipientEmail(users, user)
 
     // check recipient user present in database
-    const recipientChatRef = query(collection(db, "users"), where("email", "==", chatUser));
+    const recipientChatRef = query(collection(db, "users"), where("email", "==", getRecipientEmail(users, user)));
 
 
     // geting recipient details - array response
     const [recipientSnapshot] = useCollection(recipientChatRef);
 
 
-    // console.log("Reciepient:", recipientSnapshot?.docs[0])
-
-
-    // get first user data (becuase of using collection)
-    const recipient = recipientSnapshot?.docs[0]?.data();
-
-
-    const recipientID = recipientSnapshot?.docs[0]?.id;
-
-
-    // if user is not registered then null user come so thats why here we display chat user even if he is not registered to our app
-    const recipientEmail = chatUser;
+    const recipient = recipientSnapshot?.docs?.[0]?.data();
 
 
     // enter to the chat
     const enterChat = () => {
 
-        router.push(`/chat/${recipientID}`)
-        // if user is not registered then it will goes to "/chat/undefined"
-        // for that may use email for chat path like this >"/chat/email@gmail.com"
+        router.push(`/chat/${id}`)
+
 
     }
 
@@ -54,14 +41,14 @@ export default function Chat({ chatUser }) {
 
             {
                 recipient ?
-                    <UserAvatar src={recipient?.photoURL} />
+                    (<UserAvatar src={recipient?.photoURL} />)
                     :
-                    <UserAvatar>
+                    (<UserAvatar>
 
                         {
-                            recipientEmail[0]
+                            recipientEmail?.[0]
                         }
-                    </UserAvatar>
+                    </UserAvatar>)
             }
 
 
