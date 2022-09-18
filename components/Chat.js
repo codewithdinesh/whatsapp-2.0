@@ -41,7 +41,7 @@ export default function Chat({ id, users, user }) {
 
             {
                 recipient ?
-                    (<UserAvatar src={recipient?.photoURL} />)
+                    (<UserAvatar src={recipient?.photoURL}/>)
                     :
                     (<UserAvatar>
 

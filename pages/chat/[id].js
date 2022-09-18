@@ -16,10 +16,6 @@ import getRecipientEmail from "../../utils/getRecipientEmail";
 
 const Chat = ({ chat, messages }) => {
 
-    console.log("Chats:", chat)
-
-    console.log("Messages:", messages)
-
     const [open, setOpen] = useState(false);
 
     const router = useRouter();
@@ -29,7 +25,6 @@ const Chat = ({ chat, messages }) => {
     const [user] = useAuthState(auth);
 
 
-
     return (
         <Container>
 
@@ -37,12 +32,12 @@ const Chat = ({ chat, messages }) => {
                 <title>Chat with {getRecipientEmail(chat.users, user)}</title>
             </Head>
 
-            {/*  */}
+            {/* Mobile view hide */}
             <Hidden mdUp implementation="css">
                 <SwipeableDrawer anchor="left"
                     open={open}
                     onClose={() => setOpen(false)}
-                    onOpen={() => { }}>
+                    onOpen={() => { setOpen(true) }}>
 
 
                     {/* side bar */}
@@ -51,12 +46,16 @@ const Chat = ({ chat, messages }) => {
                 </SwipeableDrawer>
             </Hidden>
 
+            <Hidden smDown implementation="css">
+                <Sidebar />
+            </Hidden>
+
             {/* chat Container */}
             <ChatContainer>
 
                 {/* Chat Screen */}
-                <ChatScreen />
-                {/* https://youtu.be/svlEVg0To_c?t=7601 */}
+                <ChatScreen chat={chat} />
+
             </ChatContainer>
 
         </Container>
@@ -69,22 +68,23 @@ export async function getServerSideProps(context) {
     // geting messages from the server
 
     // chat ref
-    const ref = collection(doc(db, `chats`, context.query.id), "messages");
+    // const ref = collection(doc(db, `chats`, context.query.id), "messages");
 
-    const MessageSnap = await getDocs(query(ref, orderBy("timestamp")));
+    // // getting messgaes
+    // const MessageSnap = await getDocs(query(ref, orderBy("timestamp")));
 
-    const Messages = MessageSnap?.docs?.map(
-        (doc) => ({
-            id: doc?.id,
-            ...doc?.data(),
-        })).map(
-            messages => ({
-                ...messages,
-                timestamp: messages?.timestamp?.toDate()?.getTime()
-            })
-        )
+    // const Messages = MessageSnap?.docs?.map(
+    //     (doc) => ({
+    //         id: doc?.id,
+    //         ...doc?.data(),
+    //     })).map(
+    //         messages => ({
+    //             ...messages,
+    //             timestamp: messages?.timestamp?.toDate()?.getTime()
+    //         })
+    //     )
 
-
+    // getting chat details
     const chatRef = await getDoc(doc(db, `chats`, context.query.id));
 
     const chat = {
@@ -95,7 +95,7 @@ export async function getServerSideProps(context) {
     return {
 
         props: {
-            messages: JSON.stringify(Messages),
+            // messages: JSON.stringify(Messages),
             chat
 
         }
@@ -103,7 +103,7 @@ export async function getServerSideProps(context) {
 }
 
 const Container = styled.div`
-display: flex;
+    display: flex;
 
 `;
 
@@ -119,3 +119,4 @@ const ChatContainer = styled.div`
     -ms-overflow-style: none;
     scrollbar-width:none;
 `;
+

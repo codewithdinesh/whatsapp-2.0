@@ -177,7 +177,7 @@ const SearchInput = styled.input`
 `;
 
 const SidebarButton = styled(Button)`
-width: 100%;
+    width: calc(100% - 10px);
     border:1px solid ;
     margin: 5px;
 
