@@ -1,9 +1,7 @@
-import { Avatar, Button, CircularProgress, IconButton } from '@mui/material'
+import { Avatar, Button, CircularProgress, IconButton, Tooltip } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import * as EmailValidator from "email-validator";
-
-
 
 // icons
 import ChatIcon from '@mui/icons-material/Chat';
@@ -14,9 +12,18 @@ import { signOut } from 'firebase/auth';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useCollection, useDocument } from 'react-firebase-hooks/firestore';
 
-import { addDoc, arrayUnion, collection, doc, getDoc, getDocs, query, chatsSnapshot, setDoc, updateDoc, where } from 'firebase/firestore';
+import { addDoc, collection, query, where } from 'firebase/firestore';
 
 import Chat from './Chat';
+
+
+// dialog 
+import TextField from '@mui/material/TextField';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 
 const Sidebar = () => {
 
@@ -31,9 +38,28 @@ const Sidebar = () => {
     // get all chats of current user
     const [chatsSnapshot] = useCollection(q);
 
+    // dailog 
+    const [open, setOpen] = React.useState(false);
+
+    const [input, setInput] = useState("");
+
+    const handleOpenClose = () => {
+
+        if (open) setOpen(false);
+        else setOpen(true)
+    };
+
+    const handleInput = () => {
+        createChat();
+
+    }
+
+
 
     // create Chat
     const createChat = () => {
+
+        handleOpenClose()
 
         // check chat is already exists
         const chatAlreadyExists = (recipientEmail) =>
@@ -41,11 +67,6 @@ const Sidebar = () => {
                 chat?.data()?.users?.find(user => user === recipientEmail)?.length > 0
             );
 
-
-
-        const input = window.prompt(
-            "Please enter Email address of user to chat"
-        )
 
         if (!input) return null;
 
@@ -61,12 +82,14 @@ const Sidebar = () => {
             }
             console.log("Add new chat")
 
-            addDoc(chatsRef, chatObj);
+            const newChat = addDoc(chatsRef, chatObj);
+            setInput("");
 
 
         } else {
 
-            console.log("Chat Exist or Not created")
+            alert("Chat Exist or Not created or Invalid Email Address")
+
         }
 
 
@@ -92,7 +115,9 @@ const Sidebar = () => {
             }
 
             <Header>
-                <UserAvatar onClick={onSignOut} />
+                <Tooltip title="LogOut">
+                    <UserAvatar onClick={onSignOut} />
+                </Tooltip>
 
                 <IconsContainer>
                     <IconButton>
@@ -112,7 +137,7 @@ const Sidebar = () => {
                 <SearchInput placeholder='Search In chat' />
             </Search>
 
-            <SidebarButton onClick={createChat}>
+            <SidebarButton onClick={handleOpenClose}>
                 Start a new Chat
             </SidebarButton>
 
@@ -124,6 +149,37 @@ const Sidebar = () => {
                     <Chat key={chat.id} id={chat.id} users={chat.data().users} user={user} />
                 ))
             }
+
+
+            {/* Email input Dialog */}
+
+            <Dialog open={open} onClose={handleOpenClose} >
+                <DialogTitle>Send Message</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Enter the email of user where you want to send message.
+                    </DialogContentText>
+                    <TextField
+                        autoFocus
+                        margin="dense"
+                        id="name"
+                        label="Email Address"
+                        type="email"
+                        fullWidth
+                        variant="standard"
+                        value={input}
+                        onChange={(e) => {
+                            e.preventDefault();
+                            setInput(e.target.value);
+                        }}
+                        placeholder='jisko send karna hai uska email type karo.'
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleOpenClose}>Cancel</Button>
+                    <Button onClick={handleInput}>Chat</Button>
+                </DialogActions>
+            </Dialog>
 
         </Container>
     )
@@ -145,6 +201,7 @@ const Header = styled.div`
     z-index: 1;
     align-items: center;
     padding: 15px;
+    padding-right: 1px;
     height: 80px;
     border-bottom: 1px solid whitesmoke;
 `;
@@ -172,7 +229,7 @@ const SearchInput = styled.input`
     outline-width: 0;
     border: none;
     flex: 1;
-    padding: 10px;
+    padding: 20px;
     height: 25px;
 `;
 

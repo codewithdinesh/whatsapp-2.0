@@ -4,13 +4,13 @@ import { getAuth, GoogleAuthProvider } from "firebase/auth";
 
 
 const firebaseConfig = {
-    apiKey: "AIzaSyBACToHFtqkPafvwZ4SStgD4oXaq1e_iyU",
-    authDomain: "whatsapp-2o.firebaseapp.com",
-    projectId: "whatsapp-2o",
-    storageBucket: "whatsapp-2o.appspot.com",
-    messagingSenderId: "923458965480",
-    appId: "1:923458965480:web:667b77c65e0c8c0bddde5d",
-    measurementId: "G-45QGK2VZMM"
+    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+    authDomain: process.env.NEXT_PUBLIC_AUTH_DOMAIN,
+    projectId: process.env.NEXT_PUBLIC_PROJECT_ID,
+    storageBucket: process.env.NEXT_PUBLIC_STORAGE_BUCKET,
+    messagingSenderId: process.env.NEXT_PUBLIC_MESSENGING_SENDER_ID,
+    appId: process.env.NEXT_PUBLIC_APP_ID,
+    measurementId: process.env.NEXT_PUBLIC_MEASUREMENT_ID
 };
 
 
@@ -22,6 +22,7 @@ const auth = getAuth(app);
 
 const provider = new GoogleAuthProvider()
 
+console.log("FIREBASE KEY", process.env.NEXT_PUBLIC_AUTH_DOMAIN)
 
 export { auth, provider, db };
 

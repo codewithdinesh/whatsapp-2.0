@@ -12,9 +12,6 @@ export default function Home() {
       </Head>
 
       <Sidebar />
-
-      <h1>Creating Whatsapp 2.0</h1>
-
     </div>
   )
 }
