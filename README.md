@@ -1,5 +1,11 @@
 # Chat Application using NextJs, and Firebase.
 
+
+
+## Screenshot
+![image](https://github.com/user-attachments/assets/8c14bd68-b783-4eae-8b17-897e0d2138ba)
+
+
 ## Getting Started
 
 > Clone the git repository
